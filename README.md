@@ -11,7 +11,7 @@ https://github.com/mefranklin6/ExtronDatabaseConnector
 - FastAPI server communicates with the database server, and sends data back to the control processors after converting back to JSON HTTP.
 
 ## Notes:
-- The FastAPI server was built to be mostly asynchrinous for best performance.  Sometimes commands will be processed out of order.
+- The FastAPI server was built to be mostly asynchronous for best performance.  Sometimes commands will be processed out of order.
 - The REST_Connector code on the control processors uses the Wait decorator as a multi-threaded hack to prevent blocking the main thread when waiting for the external servers.
 - SQL Queries are never formatted on the control processors, we do not trust what the control processors say.  We handle SQL injection prevention and command formatting in the FastAPI app.
 - The below is example instructions of how to setup a usage tracking metrics system, but the code can be modified to to any read/write to the database from Extron control processors.
@@ -126,14 +126,14 @@ In Extron Control Script:
             print("API Metrics is {}".format(API.EnableAPI_Metrics))
 
 ## Example: POST a 'system on' metric:
-Usage: call API.start_metric or API.stop_metric and pass the name of the metric as the only paramater
+Usage: call API.start_metric or API.stop_metric and pass the name of the metric as the only parameter
 - At some system-on function, add: 
 
         API.start_metric("System On")
 - This will end up in your database as:
 -  - `|<processor name>|<current time in ISO format>|System On|Started` 
 
-The paramater passed to API.start_metric can be any string under 255 characters.  This string is sanatized before being sent to the database to prevent SQL Injection.
+The paramater passed to API.start_metric can be any string under 255 characters.  This string is sanitized before being sent to the database to prevent SQL Injection.
 
 
 
