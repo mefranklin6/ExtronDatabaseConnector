@@ -1,5 +1,4 @@
 fastapi
 pydantic
 aiomysql
-asyncio
 uvicorn
