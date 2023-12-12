@@ -92,7 +92,7 @@ Run the FastAPI app in the background:
 
 Optional: Create a cron job so the app starts on boot:
 - `crontab -e`
-- Add this (specify your full path): `@reboot nohup python3 /<path>/<to>/FastAPI_Server.py &`
+- Add this (specify your full path): `@reboot python3 /<path>/<to>/FastAPI_Server.py`
 - Write Out and exit
 
 (To shutdown the FastAPI app:)
