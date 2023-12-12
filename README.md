@@ -63,12 +63,12 @@ Create a table: example, table named 'testextron'
 - `Action varchar(255),`
 - `);`
 
-Create user account that the processors will use:
+Create user account that the FastAPI app will use:
 Example: user named 'fast_api' with the password 'mypw'
 Please use least-privilidge for this account (example below does not)
 Please also use a better password.
 - `CREATE USER 'fast_api'@'%' IDENTIFIED BY 'mypw';`
-- `GRANT ALL PRIVILEGES ON *.* TO 'extron'@'%' WITH GRANT OPTION;`
+- `GRANT ALL PRIVILEGES ON *.* TO 'fast_api'@'%' WITH GRANT OPTION;`
 - `FLUSH PRIVILEGES;`
 
 Open local firewall port from your FastAPI server and from your management station:
