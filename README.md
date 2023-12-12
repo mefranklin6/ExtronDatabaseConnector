@@ -87,6 +87,11 @@ Run the FastAPI app in the background:
 - `nohup ./FastAPI_Server.py &`
 - (Logs console output to nohup.out in the same working directory)
 
+Optional: Create a cron job so the app starts on boot:
+- `crontab -e`
+- Add this (specify your full path): `@reboot nohup python3 /<path>/<to>/FastAPI_Server.py &`
+- Write Out and exit
+
 (To shutdown the FastAPI app:)
 - Find the PID with `ps aux | grep ./FastAPI_Server.py`
 - `kill -9 <the PID you found above>`
