@@ -118,6 +118,12 @@ class REST_Connector:
 
             self.start_metric(self.current_input)
 
+    def clear_group(self):
+        """Clears current mutually exclusive groups,
+        call this at system shutdown"""
+        self.stop_metric(self.current_input)
+        self.current_input = None
+
     def rest_read(self, url: str, timeout=4):
         """
         IMPORTANT: This function is blocking!
