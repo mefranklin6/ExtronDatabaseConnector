@@ -21,7 +21,11 @@ https://github.com/mefranklin6/ExtronDatabaseConnector
 ## Server:
 Requirements: 
 - An x86 server running MySQL database (could be ported to other DB's too).  Instructions are for hosting on Ubuntu.
-- An x86 server running modern Python 3 (built on 3.12.0). For this repo, this is the same server as the one running the database, but it can be two different servers.
+- An x86 server running modern Python 3 (built on 3.12.0). For this repo, this is the same server as the one running the database, but it can be two different servers. Also the following python libraries that can be installed with pip3:
+    - aiomysql
+    - fastapi
+    - pydantic
+    - uvicorn
 - Reserved or Static IP's on servers
 - An x86 management PC with Control Script Deployment Utility, basically your regular workstation.
 
