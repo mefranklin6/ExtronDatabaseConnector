@@ -63,7 +63,7 @@ Create a table: example, table named 'testextron'
 - `Action varchar(255),`
 - `);`
 
-Create user account that the processors will use:
+Create user account that the FastAPI app will use:
 Example: user named 'fast_api' with the password 'mypw'
 Please use least-privilidge for this account (example below does not)
 Please also use a better password.
