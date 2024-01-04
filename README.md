@@ -61,10 +61,10 @@ Enter the database:
 
 Create a table: example, table named 'testextron'
 - `CREATE TABLE testextron (`
-- `Room varchar(255),`
-- `Time varchar(255),`
-- `Metric varchar(255),`
-- `Action varchar(255),`
+- `room varchar(255),`
+- `time varchar(255),`
+- `metric varchar(255),`
+- `action varchar(255)`
 - `);`
 
 Create user account that the FastAPI app will use:
