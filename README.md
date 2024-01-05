@@ -45,7 +45,7 @@ Requirements:
 ## Install MySQL on Database Server:
 - `sudo apt install mysql-server`
 
-Bind the current IP of the server to the database
+If using two servers: Bind the current IP of the server to the database
 - `sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf`
 - Find 'bind-address' and set that to the IP of your server
 - Write-out and exit nano
@@ -69,7 +69,7 @@ Create a table: example, table named 'testextron'
 
 Create user account that the FastAPI app will use:
 Example: user named 'fast_api' with the password 'mypw', which will have INSERT (new write) and SELECT (read) privileges on the table 'testextron' in the database 'devdb'.  Only grant the minimum amount of privileges needed.  
-Also, please use a better password or consider a better system of authentication.
+Also, please use a better password or consider a better system of authentication.  The server IP should be the same as the bind address in `mysqld.cnf` that you set previously.
 - `CREATE USER 'fast_api'@'<your server IP>' IDENTIFIED BY 'mypw';`
 - `GRANT INSERT, SELECT ON devdb.testextron TO 'fast_api'@'<your server IP>';`
 - `FLUSH PRIVILEGES;`
