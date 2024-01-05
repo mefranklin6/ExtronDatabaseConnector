@@ -46,7 +46,7 @@ Requirements:
 - `sudo apt install mysql-server`
 
 Bind the current IP of the server to the database
-- `sudo nano /etc/mysql/mysql.conf.d/mysql.cnf`
+- `sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf`
 - Find 'bind-address' and set that to the IP of your server
 - Write-out and exit nano
 
@@ -99,7 +99,7 @@ Optional: Create a cron job so the app starts on boot:
 - Find the PID with `ps aux | grep ./FastAPI_Server.py`
 - `kill -9 <the PID you found above>`
 
-## Add the connector your Control Processors
+## Add the connector to your Control Processors
 - Copy `REST_Connector.py` to your control processor repository.  I copied it to `/src/modules/project`
 
 - Instantiate the connector in your control script code
