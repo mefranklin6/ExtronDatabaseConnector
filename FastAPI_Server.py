@@ -86,7 +86,7 @@ class DatabaseTools:
 
     async def _format_metric(self):
         return """
-                    INSERT INTO {} (Room, Time, Metric, Action)
+                    INSERT INTO {} (room, time, metric, action)
                     VALUES (%s, %s, %s, %s)
                 """.format(
             self.table
@@ -127,20 +127,20 @@ app.add_event_handler("shutdown", shutdown_event)
 
 
 class Item(BaseModel):
-    Processor: str
-    Time: str
-    Metric: str
-    Action: str
+    processor: str
+    time: str
+    metric: str
+    action: str
 
 
 @app.post("/data")
 async def receive_metric_data(item: Item):
     # print(item.model_dump())
     processor, time, metric, action = (
-        item.Processor,
-        item.Time,
-        item.Metric,
-        item.Action,
+        item.processor,
+        item.time,
+        item.metric,
+        item.action,
     )
     await db_connect.db_write_metric(processor, time, metric, action)
     return {"message": "200"}
