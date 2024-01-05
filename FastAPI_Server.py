@@ -23,7 +23,7 @@ This needs to be ran on a x86 machine
 class DatabaseTools:
     def __init__(self):
         # if using a seperate database server, change the host to the IP address
-        self.host = gethostbyname(gethostname())
+        self.host = "127.0.0.1"
         self.user = "fast_api"
         self.password = "mypw"  # use a secure method, don't deploy to prod like this
         self.database = "devdb"
@@ -188,4 +188,4 @@ async def global_report_enable() -> str:
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host=db_connect.host, port=8080)
+    uvicorn.run(app, host=gethostbyname(gethostname()), port=8080)
