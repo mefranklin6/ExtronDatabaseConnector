@@ -9,6 +9,7 @@ import aiomysql
 import asyncio
 from time import sleep
 
+
 """
 https://github.com/mefranklin6/ExtronDatabaseConnector
 
@@ -146,10 +147,12 @@ async def receive_metric_data(item: Item):
     return {"message": "200"}
 
 
-@app.get("/stress")
-async def get_data():
-    sql_data = await db_connect.db_read("SELECT * FROM scitemp")
-    return {"message": sql_data}
+# Example SQL Read
+
+# @app.get("/stress")
+# async def get_data():
+#     sql_data = await db_connect.db_read("SELECT * FROM scitemp")
+#     return {"message": sql_data}
 
 
 @app.get("/")
@@ -174,7 +177,7 @@ This message is returned from the proxy server
 @app.get("/data/global/enable")
 async def global_report_enable() -> str:
     try:
-        result_bool, error_message = await asyncio.wait_for(
+        result_bool, _ = await asyncio.wait_for(
             db_connect.check_connection(), timeout=3
         )
         if result_bool == True:
