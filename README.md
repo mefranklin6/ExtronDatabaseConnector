@@ -20,7 +20,7 @@ https://github.com/mefranklin6/ExtronDatabaseConnector
 # Prerequisites
 ## Server:
 Requirements: 
-- An x86 server running MySQL database (could be ported to other DB's too).  Instructions are for hosting on Ubuntu.
+- An x86 server running MySQL database (could be ported to other DB's too).  Instructions are for hosting on Ubuntu + bash.
 - An x86 server running modern Python 3 (built on 3.12.0). For this repo, this is the same server as the one running the database, but it can be two different servers.
 - Reserved or Static IP's on servers
 - An x86 management PC with Control Script Deployment Utility, basically your regular workstation.
@@ -74,13 +74,13 @@ Open local firewall port from your FastAPI server and from your management stati
 - `sudo ufw allow from <your FastAPI server IP> to any port 3306`
 - `sudo ufw allow from <your workstation ip> to any port 3306`
 
-## Recommended: Run the FastAPI App in a Python Virtual Enviroment
+## Recommended: Run the FastAPI App in a Python Virtual Enviroment, as a systemctl service
 Copy this repo in to /opt/yourproject and cd into it
 - `cd /opt/yourproject`
 
 If needed, edit the `FastAPI_Server.py` with the proper credentials for your MySQL account you setup above.
 
-- - If permissions error:
+- - If ever permissions errors in /opt, always:
 - - - `sudo chgrp -R user /opt/yourproject`
 - - -  `sudo chmod -R g+rwx /opt/yourproject`
 
@@ -92,7 +92,7 @@ Create a virtual python enviroment called 'my-virt'
 
 Start and enter the virtual enviroment
 - `source /opt/yourproject/my-virt/bin/activate`
-(replace 'source' with '.' if you have an error)
+
 
 Install packages
 - `pip install -r requirements.txt`
@@ -104,7 +104,8 @@ Exit the virtual enviroment:
 
 Make a shell script that runs at boot which enters the virtual enviroment and starts the FastAPI app.
 - `sudo nano /opt/yourproject/fastapi_startup.sh`
-
+        
+        #!/bin/bash
         cd /opt/yourproject
         source /opt/yourproject/my-virt/bin/activate
         python3 FastAPI_Server.py my-virt
@@ -113,18 +114,33 @@ Make the shell script and FastAPI app executable
 - `sudo chmod +x fastapi_startup.sh`
 - `sudo chmod +x FastAPI_Server.py`
 
-Add the shell script to a 'on reboot' cron job:
-- `crontab -e`
-- (Add this at the top)
-- - `@reboot /bin/bash -c /opt/yourproject/fastapi_startup.sh`
-- Write out and exit
+Create a new service tied to the shell script to start the app on boot
+- `sudo nano /etc/systemd/system/fastapi.service`
+        
+        [Unit]
+        Description=fastapi
+        After=mysql.service
+
+        [Service]
+        ExecStart=/opt/yourproject/fastapi_startup.sh
+        TimeoutSec=60
+        Restart=on-failure
+        RestartSec=60
+
+        [Install]
+        WantedBy=multi-user.target
+
+Reload daemons, enable the service, start the service
+- `sudo systemctl enable fastapi`
+- `sudo systemctl daemon-reload`
+- `sudo systemctl start fastapi`
 
 
-Reboot the server or just `./fastapi_startup.sh`.  
+Check if the service is running now.
+- `sudo systemctl status fastapi`
 
 If you need to stop the App to make changes:
-- Find the PID with `ps aux | grep ./FastAPI_Server.py`
-- `kill -9 <the PID you found above>`
+- `sudo systemctl stop fastapi`
 
 ## Add the connector to your Control Processors
 - Copy `REST_Connector.py` to your control processor repository.  I copied it to `/src/modules/project`
