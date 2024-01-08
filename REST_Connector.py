@@ -72,10 +72,10 @@ class REST_Connector:
 
         def _rest_send_metric_inner(action, metric_name):
             data = {
-                "Processor": self.ProcessorName,
-                "Time": time_str,
-                "Metric": metric_name,
-                "Action": action,
+                "room": self.ProcessorName,
+                "time": time_str,
+                "metric": metric_name,
+                "action": action,
             }
 
             data = json.dumps(data).encode()
