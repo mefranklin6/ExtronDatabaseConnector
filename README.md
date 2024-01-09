@@ -20,8 +20,8 @@ https://github.com/mefranklin6/ExtronDatabaseConnector
 # Prerequisites
 ## Server:
 Requirements: 
-- An x86 server running MySQL database (could be ported to other DB's too).  Instructions are for hosting on Ubuntu + bash.
-- An x86 server running modern Python 3 (built on 3.12.0). For this repo, this is the same server as the one running the database, but it can be two different servers.
+- An x86 server running MySQL database (could be ported to other DB's too).  Instructions are for hosting on a remote Ubuntu Server + bash.
+- An x86 server running modern Python 3 (built on 3.10.12). For this repo, this is the same server as the one running the database, but it can be two different servers.
 - Reserved or Static IP's on servers
 - An x86 management PC with Control Script Deployment Utility, basically your regular workstation.
 
@@ -31,11 +31,11 @@ Requirements:
 - Deployment must be done by an Extron Authorized Programmer (So you can use Control Script Deployment Utility)
 
 
-## Firewall Rules (if not on the same VLAN):
-- TCP 22 SSH : From your management PC (if running headless servers)
-- TCP 8080 HTTP : To/From FastAPI server and Extron processors
+## Firewall Rules:
+- TCP 22 SSH : From your management PC (if running headless/remote servers)
+- TCP 8080 HTTP : To/From FastAPI server (if using two servers) and To/From Extron processors
 - TCP 3306 MySQL : To/From Database Server and FastAPI server (if running on different machines)
-- TCP 3306 MySQL : To/From your management PC to access the database
+- Optional: TCP 3306 MySQL : To/From your management PC for easier access to the database, MySQL workbench, etc.
 
 # Instructions
 ## Install MySQL on Database Server:
@@ -69,10 +69,6 @@ Also, please use a better password or consider a better system of authentication
 - `CREATE USER 'fast_api'@'<your server IP>' IDENTIFIED BY 'mypw';`
 - `GRANT INSERT, SELECT ON devdb.testextron TO 'fast_api'@'<your server IP>';`
 - `FLUSH PRIVILEGES;`
-
-Open local firewall port from your FastAPI server and from your management station:
-- `sudo ufw allow from <your FastAPI server IP> to any port 3306`
-- `sudo ufw allow from <your workstation ip> to any port 3306`
 
 ## Recommended: Run the FastAPI App in a Python Virtual Enviroment, as a systemctl service
 Copy this repo in to /opt/yourproject and cd into it
