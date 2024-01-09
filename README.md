@@ -56,13 +56,14 @@ Enter the database:
 - `use devdb;`
 
 Create a table: example, table named 'testextron'
-- `CREATE TABLE testextron (`
-- `room varchar(255),`
-- `time varchar(255),`
-- `metric varchar(255),`
-- `action varchar(255)`
-- `);`
-
+```sql
+CREATE TABLE testextron (
+room varchar(255),
+time varchar(255),
+metric varchar(255),
+action varchar(255)
+);
+```
 ## Create service account on MySQL that the FastAPI app will use:
 Example: user named 'fast_api' with the password 'mypw', which will have INSERT (new write) and SELECT (read) privileges on the table 'testextron' in the database 'devdb'.  Only grant the minimum amount of privileges needed.  
 Also, please use a better password or consider a better system of authentication.  The server IP should be the same as the bind address in `mysqld.cnf` that you set previously (it will be 127.0.0.1 if you didn't change it)
@@ -100,11 +101,13 @@ Exit the virtual enviroment:
 
 Make a shell script that runs at boot which enters the virtual enviroment and starts the FastAPI app.
 - `sudo nano /opt/yourproject/fastapi_startup.sh`
-        
-        #!/bin/bash
-        cd /opt/yourproject
-        source /opt/yourproject/my-virt/bin/activate
-        python3 FastAPI_Server.py my-virt
+
+```bash         
+#!/bin/bash
+cd /opt/yourproject
+source /opt/yourproject/my-virt/bin/activate
+python3 FastAPI_Server.py my-virt
+```
 
 Make the shell script and FastAPI app executable
 - `sudo chmod +x fastapi_startup.sh`
@@ -112,19 +115,21 @@ Make the shell script and FastAPI app executable
 
 Create a new service tied to the shell script to start the app on boot
 - `sudo nano /etc/systemd/system/fastapi.service`
-        
-        [Unit]
-        Description=fastapi
-        After=mysql.service
 
-        [Service]
-        ExecStart=/opt/yourproject/fastapi_startup.sh
-        TimeoutSec=60
-        Restart=on-failure
-        RestartSec=60
+```bash    
+[Unit]
+Description=fastapi
+After=mysql.service
 
-        [Install]
-        WantedBy=multi-user.target
+[Service]
+ExecStart=/opt/yourproject/fastapi_startup.sh
+TimeoutSec=60
+Restart=on-failure
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target
+```
 
 Reload daemons, enable the service, start the service
 - `sudo systemctl enable fastapi`
@@ -157,18 +162,21 @@ This will check the health of the app and database before sending additional com
 Recommended this is checked at every system startup.
 
 In Extron Control Script:
-
+```python
     def Startup(): # your startup function
         @Wait(0.1) # multi-thread hack to prevent blocking
         def CheckMetricsEnabled():
             API.EnableAPI_Metrics = API.get_global_api_metrics_enable()
             print("API Metrics is {}".format(API.EnableAPI_Metrics))
-
+```
 ## Example: POST a 'system on' metric:
 Usage: call API.start_metric or API.stop_metric and pass the name of the metric as the only parameter
 - At some system-on function, add: 
 
-        API.start_metric("System On")
+```python 
+API.start_metric("System On")
+```
+
 - This will end up in your database as:
 -  - `|<processor name>|<current time in ISO format>|System On|Started` 
 
@@ -180,14 +188,16 @@ The paramater passed to API.start_metric can be any string under 255 characters.
 In FastAPI_Server.py, define an action and a page that acts as a trigger
 
 In this example, we will read everything from a table called 'testtable' and send that to the processor when "Btn_GetTable" is pressed
-        
+
+```python
         @app.get("/get_table")
         async def get_table():
             data = await db_connect.db_read('SELECT * FROM testtable')
             return {"message": data}
+```
 
 In Extron Control Script:
-
+```python
     @event(Btn_GetTable, "Pressed")
     def GetTable(btn, state):
         @Wait(0.1) # multi-thread hack to prevent blocking
@@ -196,13 +206,17 @@ In Extron Control Script:
                     url="<your_server_ip>:8080/get_table",
                     timeout=5 # remember this is non-blocking
             )
+```
+
 
 ## Example: Handle Mutually Exclusive Metrics (like projector input)
 In Extron Control Script:
 
+```python
     @event(Btn_PC_Input, "Pressed"):
     def SetInput_PC(btn, state):
         <switcher commands, GUI commands, etc>
         API.start_metric("PC", group="Inputs")
+```
 
 The current input is stored in the REST_Connector class.  When group is passed as a paramater and that group is "Inputs", it will unload and send a metrics stopped message of the old input and send a metrics started message for the new input.
