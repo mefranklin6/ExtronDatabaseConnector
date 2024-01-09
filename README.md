@@ -67,10 +67,12 @@ action varchar(255)
 ## Create service account on MySQL that the FastAPI app will use:
 Example: user named 'fast_api' with the password 'mypw', which will have INSERT (new write) and SELECT (read) privileges on the table 'testextron' in the database 'devdb'.  Only grant the minimum amount of privileges needed.  
 Also, please use a better password or consider a better system of authentication.  The server IP should be the same as the bind address in `mysqld.cnf` that you set previously (it will be 127.0.0.1 if you didn't change it)
-- `CREATE USER 'fast_api'@'<your server IP>' IDENTIFIED BY 'mypw';`
-- `GRANT INSERT, SELECT ON devdb.testextron TO 'fast_api'@'<your server IP>';`
-- `FLUSH PRIVILEGES;`
 
+```sql
+CREATE USER 'fast_api'@'<your server IP>' IDENTIFIED BY 'mypw';
+GRANT INSERT, SELECT ON devdb.testextron TO 'fast_api'@'<your server IP>';
+FLUSH PRIVILEGES;
+```
 ## Recommended: Run the FastAPI App in a Python Virtual Enviroment, as a systemctl service
 Copy this repo in to /opt/yourproject and cd into it
 - `cd /opt/yourproject`
@@ -147,13 +149,14 @@ If you need to stop the App to make changes:
 - Copy `REST_Connector.py` to your control processor repository.  I copied it to `/src/modules/project`
 
 - Instantiate the connector in your control script code
-    
-        from modules.project.REST_Connector import REST_Connector
-        API = REST_Connector(
-            <str: this processor name>, 
-            <str: IP address of your server>
-        )
 
+```python    
+from modules.project.REST_Connector import REST_Connector
+API = REST_Connector(
+    <str: this processor name>, 
+    <str: IP address of your server>
+)
+```
 
 
 ## Check Database Connection upon Startup
