@@ -6,9 +6,9 @@ Not affiliated with the Extron corporation
 https://github.com/mefranklin6/ExtronDatabaseConnector
 
 ## Architecture
-- Extron control processors send REST-like JSON API calls to a proxy web server, called FastAPI_Server.
+- Extron control processors send REST-like API calls to a proxy web server, called FastAPI_Server.
 - FastAPI server converts GET or POST commands from the processors into SQL SELECT/INSERT commands
-- FastAPI server communicates with the database server, and sends data back to the control processors after converting back to JSON HTTP.
+- FastAPI server communicates with the database server, and sends data back to the control processors, in JSON or HTTP.
 
 ## Notes:
 - The FastAPI server was built to be mostly asynchronous for best performance.  Sometimes commands will be processed out of order.
@@ -23,12 +23,11 @@ Requirements:
 - An x86 server running MySQL database (could be ported to other DB's too).  Instructions are for hosting on a remote Ubuntu Server + bash.
 - An x86 server running modern Python 3 (built on 3.10.12). For this repo, this is the same server as the one running the database, but it can be two different servers.
 - Reserved or Static IP's on servers
-- An x86 management PC with Control Script Deployment Utility, basically your regular workstation.
 
 
 ## Extron Control Processors:
 - Processors must be running Extron Control Script
-- Deployment must be done by an Extron Authorized Programmer (So you can use Control Script Deployment Utility)
+- Deployment or project certification must be done by an Extron Authorized Programmer, as usual
 
 
 ## Firewall Rules:
@@ -41,9 +40,9 @@ Requirements:
 ## Install MySQL on Database Server:
 - `sudo apt install mysql-server`
 
-If using two servers: Bind the current IP of the server to the database
+If using two servers: Bind the current IP of the server to the database.  You can leave it as 127.0.0.1 if running FastAPI and MySQL on the same server.
 - `sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf`
-- Find 'bind-address' and set that to the IP of your server
+- Find 'bind-address' and set that to the IP of your MySQL server
 - Write-out and exit nano
 
 Enter MySQL as root
