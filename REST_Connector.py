@@ -14,6 +14,11 @@ This is a module that is ran by the Extron control processor.
 
 Requires FastAPI_Server.py to be running on an external x86 server
 """
+TIMEOUT = 5  # seconds
+
+API_PATHS = {
+    "global_enable": "/global/enable",
+}
 
 
 class REST_Connector:
@@ -44,8 +49,8 @@ class REST_Connector:
 
         """
 
-        url = "{}/global/enable".format(self.proxy_server)
-        result = self.rest_read(url, timeout=15)
+        url = "{}{}".format(self.proxy_server, API_PATHS["global_enable"])
+        result = self.rest_read(url, timeout=TIMEOUT)
 
         if result == "True":
             print("Found Global Trigger set to True: Enabling API Metrics")
@@ -62,6 +67,33 @@ class REST_Connector:
             )
         self.EnableAPI_Metrics = False
         return False
+
+    def rest_read(self, url: str, timeout=TIMEOUT):
+        """
+        IMPORTANT: This function is blocking!
+        If the proxy server is not reachable, the main thread is blocked
+        until the timeout period.
+        Always use @Wait(0.1) decorator when calling this function
+        """
+
+        try:
+            with urllib.request.urlopen(url, timeout=timeout) as result:
+                return json.loads(result.read().decode())
+        except urllib.error.HTTPError as e:
+            print("HTTPError: {} for {}".format(e.code, url))
+        except urllib.error.URLError as e:
+            print("URLError: {} for {}".format(e.reason, url))
+
+    # Called from main
+    def start_metric(self, metric_name, group=None):
+        if group:
+            return self._handle_group(metric_name, group)
+
+        self._rest_send_metric("Started", metric_name)
+
+    # Called from main
+    def stop_metric(self, metric_name, group=None):
+        self._rest_send_metric("Stopped", metric_name)
 
     def _rest_send_metric(self, action, metric_name):
         if self.EnableAPI_Metrics != True:
@@ -82,25 +114,14 @@ class REST_Connector:
             headers = {"Content-Type": "application/json"}
             req = urllib.request.Request(self.proxy_server, data=data, headers=headers)
             try:
-                with urllib.request.urlopen(req, timeout=10) as response:
+                with urllib.request.urlopen(req, timeout=TIMEOUT) as response:
                     print(json.loads(response.read().decode()))
-            except:
-                print("Proxy Server Timeout")
+            except Exception as e:
+                print(e)
 
         @Wait(0.1)  # wait decorator multi-thread hack
         def _multi_thread_rest_metric_send():
             _rest_send_metric_inner(action, metric_name)
-
-    # Called from main
-    def start_metric(self, metric_name, group=None):
-        if group:
-            return self._handle_group(metric_name, group)
-
-        self._rest_send_metric("Started", metric_name)
-
-    # Called from main
-    def stop_metric(self, metric_name, group=None):
-        self._rest_send_metric("Stopped", metric_name)
 
     def _handle_group(self, metric_name, group):
         # Mutually exclusive per group
@@ -123,19 +144,3 @@ class REST_Connector:
         call this at system shutdown"""
         self.stop_metric(self.current_input)
         self.current_input = None
-
-    def rest_read(self, url: str, timeout=4):
-        """
-        IMPORTANT: This function is blocking!
-        If the proxy server is not reachable, the main thread is blocked
-        until the timeout period.
-        Always use @Wait(0.1) decorator when calling this function
-        """
-
-        try:
-            with urllib.request.urlopen(url, timeout=timeout) as result:
-                return json.loads(result.read().decode())
-        except urllib.error.HTTPError as e:
-            print("HTTPError: {} for {}".format(e.code, url))
-        except urllib.error.URLError as e:
-            print("URLError: {} for {}".format(e.reason, url))
