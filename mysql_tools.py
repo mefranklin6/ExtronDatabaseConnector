@@ -30,7 +30,7 @@ class DatabaseTools:
             except Exception as e:
                 print(f"Error connecting to database: {e}")
                 sleep(5)  # intentionally blocks the event loop.
-                # FastAPI startup will be delayed until the database is connected
+                # Server startup will be delayed until the database is connected
 
     async def check_connection(self) -> tuple():
         """
