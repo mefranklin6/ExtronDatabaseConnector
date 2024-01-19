@@ -40,33 +40,58 @@ async def create_pool():
 
 
 async def format_metric_data(data):
-    data_dict = json.loads(data)
-    room = data_dict.get("room")
+    try:
+        data_dict = json.loads(data)
+        room = data_dict.get("room")
 
-    # GCP processors currently have no way of giving us time,
-    # so we stamp it at the server level
-    time_now = datetime.now()
-    time = time_now.strftime("%Y-%m-%dT%H:%M:%S")
+        # GCP processors currently have no way of giving us time,
+        # so we stamp it at the server level
+        time_now = datetime.now()
+        time = time_now.strftime("%Y-%m-%dT%H:%M:%S")
 
-    metric = data_dict.get("metric")
-    action = data_dict.get("action")
+        metric = data_dict.get("metric")
+        action = data_dict.get("action")
 
-    return room, time, metric, action
+        return room, time, metric, action
+
+    except Exception as e:
+        print(f"Error formatting metric data: {e}")
+        return None
+
+
+async def load_data(reader):
+    return await reader.read(100)
+
+
+async def decode_data(data):
+    return data.decode()
 
 
 async def receive_data(reader, writer):
-    data = await reader.read(100)
-    message = data.decode()
-    addr = writer.get_extra_info("peername")
+    try:
+        data = await load_data(reader)
+        message = await decode_data(data)
+        addr = writer.get_extra_info("peername")
 
-    print(f"Received {message!r} from {addr!r}")
+        print(f"Received {message!r} from {addr!r}")
 
-    room, time, metric, action = await format_metric_data(message)
-    await db_connect.db_write_metric(room, time, metric, action)
+        # checks if the message looks like JSON
+        if message[0] != "{":
+            print("Invalid data structure")
+            return
 
-    await writer.drain()
+        room, time, metric, action = await format_metric_data(message)
 
-    writer.close()
+        if room is None:
+            print("Invalid data structure")
+            return
+
+        await db_connect.db_write_metric(room, time, metric, action)
+
+    finally:
+        await writer.drain()
+        writer.close()
+
 
 
 async def main():
