@@ -26,7 +26,7 @@ Requirements:
 
 
 ## Extron Control Processors:
-- Processors must be running Extron Control Script
+- Processors must be running Extron Control Script (GCP compatibility is in development, see GCP_Socket_Server)
 - Deployment or project certification must be done by an Extron Authorized Programmer, as usual
 
 
