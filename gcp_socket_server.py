@@ -23,7 +23,8 @@ Example:
 then call 'User Defined Command' to send it out the processor to here
 
 """
-TCP_PORT = 9999
+
+TCP_PORT = 41794
 
 
 db_connect = DatabaseTools(
@@ -91,7 +92,6 @@ async def receive_data(reader, writer):
     finally:
         await writer.drain()
         writer.close()
-
 
 
 async def main():
