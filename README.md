@@ -1,5 +1,5 @@
 # ExtronDatabaseConnector
-Allows Extron processors to connect with an external database
+Allows Extron processors to connect with external databases
 
 Not affiliated with the Extron corporation
 
@@ -10,11 +10,24 @@ https://github.com/mefranklin6/ExtronDatabaseConnector
 - FastAPI server converts GET or POST commands from the processors into SQL SELECT/INSERT commands
 - FastAPI server communicates with the database server, and sends data back to the control processors, in JSON or HTTP.
 
+## Files
+### Server Side (x86_64):
+- `FastAPI_Server` is a server app that bi-directionally communicates with processors running Extron Control Script (ECS)
+- `GCP_Socket_Server` (OPTIONAL) is a unidirectional server app for processors programmed with Global Configurator Plus/Professional (GCP)
+- `mysql_tools` is a module for connecting the server apps to a MySQL database.
+- `fastapi.service` converts the app and python virtual enviroment to a linux service that can run in the background on startup
+- `requirements.txt`: used for installing package dependencies with pip.
+
+### Processor (any modern Extron processor):
+- `REST_Connector` is a module designed to be ran on your control processor with ECS.
+- GCP Processors require manually forming JSON to be sent to the GCP_Socket_Server.  This is becasue MLC controllers can't run ECS.
+
 ## Notes:
-- The FastAPI server was built to be mostly asynchronous for best performance.  Sometimes commands will be processed out of order.
+- The server apps were built to be mostly asynchronous for best performance.  Sometimes commands will be processed out of order.
 - The REST_Connector code on the control processors uses the Wait decorator as a multi-threaded hack to prevent blocking the main thread when waiting for the external servers.
-- SQL Queries are never formatted on the control processors, we do not trust what the control processors say.  We handle SQL injection prevention and command formatting in the FastAPI app.
+- SQL Queries are never formatted on the control processors, we do not trust what the control processors say.  We handle SQL injection prevention and command formatting in the mysql_tools module.
 - The below is example instructions of how to setup a usage tracking metrics system, but the code can be modified to to any read/write to the database from Extron control processors.
+- The instructions and requirements below are only for ECS processors, but you can perform the same steps to run `GCP_Socket_Server` if needed.  These two apps/services can co-exist as long as they use different ports.
 
 
 # Prerequisites
@@ -26,8 +39,7 @@ Requirements:
 
 
 ## Extron Control Processors:
-- Processors must be running Extron Control Script (GCP compatibility is in development, see GCP_Socket_Server)
-- Deployment or project certification must be done by an Extron Authorized Programmer, as usual
+- Processors must be running Extron Control Script (GCP devices use GCP_Socket_Server)
 
 
 ## Firewall Rules:
@@ -132,7 +144,7 @@ RestartSec=60
 WantedBy=multi-user.target
 ```
 
-Reload daemons, enable the service, start the service
+Eenable the service, reload the daemons, start the service
 - `sudo systemctl enable fastapi`
 - `sudo systemctl daemon-reload`
 - `sudo systemctl start fastapi`
@@ -221,4 +233,7 @@ In Extron Control Script:
         API.start_metric("PC", group="Inputs")
 ```
 
-The current input is stored in the REST_Connector class.  When group is passed as a paramater and that group is "Inputs", it will unload and send a metrics stopped message of the old input and send a metrics started message for the new input.
+The current input is stored in the REST_Connector class.  When group is passed as a paramater and that group is "Inputs", it will unload and send a metrics stopped message of the old input and send a metrics started message for the new input.  
+
+
+Currently only "Inputs" group is supported for mutual exclusivity, but you can add more by adding a class attibute to store the data, adding that attribute to the `clear_group` method, and adding your logic to the `_handle_group` method.
