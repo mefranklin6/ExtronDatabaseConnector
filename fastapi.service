@@ -1,0 +1,12 @@
+[Unit]
+Description=fastapi
+After=mysql.service
+
+[Service]
+ExecStart=/opt/yourproject/fastapi_startup.sh
+TimeoutSec=60
+Restart=on-failure
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target
