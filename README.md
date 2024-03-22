@@ -5,29 +5,31 @@ Not affiliated with the Extron corporation
 
 https://github.com/mefranklin6/ExtronDatabaseConnector
 
-## Architecture
-- Extron control processors send REST-like API calls to a proxy web server, called FastAPI_Server.
-- FastAPI server converts GET or POST commands from the processors into SQL SELECT/INSERT commands
-- FastAPI server communicates with the database server, and sends data back to the control processors, in JSON or HTTP.
+## Architecture for Extron Control Script Processors
+- Extron control processors send REST-like API calls to a proxy web server
+- Proxy server converts GET or POST commands from the processors into SQL SELECT/INSERT commands
+- Proxy server communicates with the database server, and sends data back to the control processors, in JSON or HTTP.
 
-## Files
-### Server Side (x86_64):
-- `FastAPI_Server` is a server app that bi-directionally communicates with processors running Extron Control Script (ECS)
-- `GCP_Socket_Server` (OPTIONAL) is a unidirectional server app for processors programmed with Global Configurator Plus/Professional (GCP)
-- `mysql_tools` is a module for connecting the server apps to a MySQL database.
-- `fastapi.service` converts the app and python virtual enviroment to a linux service that can run in the background on startup
-- `requirements.txt`: used for installing package dependencies with pip.
+## Architecture for Extron Global Configurator Pro/Plus Processors
+- Programmers write JSON strings and send them out from GCP prcessors using a generic TCP driver
+- Proxy server receives these strings via TCP socket, then interprets and formats these strings
+- Proxy server sends data to the SQL server
 
-### Processor (any modern Extron processor):
-- `REST_Connector` is a module designed to be ran on your control processor with ECS.
-- GCP Processors require manually forming JSON to be sent to the GCP_Socket_Server.  This is becasue MLC controllers can't run ECS.
+## Folders:
+- Control_Processor_Files : Add these files to your Extron processors running Extron Control Script (ECS)
+- ECS_Server: Server files for a x86_64 machine for bi-directional database communications to processors running ECS
+- GCP_Server: OPTIONAL: unidirectional GCP Processor to external database server files.  
+
 
 ## Notes:
 - The server apps were built to be mostly asynchronous for best performance.  Sometimes commands will be processed out of order.
 - The REST_Connector code on the control processors uses the Wait decorator as a multi-threaded hack to prevent blocking the main thread when waiting for the external servers.
 - SQL Queries are never formatted on the control processors, we do not trust what the control processors say.  We handle SQL injection prevention and command formatting in the mysql_tools module.
-- The below is example instructions of how to setup a usage tracking metrics system, but the code can be modified to to any read/write to the database from Extron control processors.
-- The instructions and requirements below are only for ECS processors, but you can perform the same steps to run `GCP_Socket_Server` if needed.  These two apps/services can co-exist as long as they use different ports.
+- **The below contains example instructions of how to setup a usage tracking metrics system, but the code can be modified to to any read/write to the database from Extron control processors.**
+
+
+
+### *The instructions and requirements below are only for ECS processors, but you can perform the same steps to run `GCP_Socket_Server` for GCP processors if needed.  These two apps/services can co-exist as long as they use different ports.*
 
 
 # Prerequisites
