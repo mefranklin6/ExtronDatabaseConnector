@@ -91,7 +91,7 @@ Copy this repo in to /opt/yourproject and cd into it
 If needed, edit the `FastAPI_Server.py` with the proper credentials for your MySQL account you setup above.
 
 - - If ever permissions errors in /opt, always:
-- - - `sudo chgrp -R user /opt/yourproject`
+- - - `sudo chgrp -R users /opt/yourproject`
 - - -  `sudo chmod -R g+rwx /opt/yourproject`
 
 Install venv if you don't have it
