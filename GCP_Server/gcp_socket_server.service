@@ -1,0 +1,12 @@
+[Unit]
+Description=gcp_socket_server
+After=mysql.service
+
+[Service]
+ExecStart=/opt/yourproject/gcp_socket_server_startup.sh
+TimeoutSec=60
+Restart=on-failure
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target
