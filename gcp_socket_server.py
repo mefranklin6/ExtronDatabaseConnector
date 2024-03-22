@@ -7,7 +7,7 @@ from datetime import datetime
 from socket import gethostbyname, gethostname
 
 """
-In-development server to unidirectionally connect GCP processors to an external database
+Server to unidirectionally connect GCP processors to an external database
 
 This needs to be ran on a x86 server
 
@@ -61,7 +61,7 @@ async def format_metric_data(data):
 
 
 async def load_data(reader):
-    return await reader.read(100)
+    return await reader.read(256)
 
 
 async def decode_data(data):
@@ -73,8 +73,6 @@ async def receive_data(reader, writer):
         data = await load_data(reader)
         message = await decode_data(data)
         addr = writer.get_extra_info("peername")
-
-        print(f"Received {message!r} from {addr!r}")
 
         # checks if the message looks like JSON
         if message[0] != "{":
