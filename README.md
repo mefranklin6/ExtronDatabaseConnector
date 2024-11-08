@@ -239,3 +239,8 @@ The current input is stored in the REST_Connector class.  When group is passed a
 
 
 Currently only "Inputs" group is supported for mutual exclusivity, but you can add more by adding a class attibute to store the data, adding that attribute to the `clear_group` method, and adding your logic to the `_handle_group` method.
+
+## Future
+Make this system vendor agnostic.  Move the ECS code examples and anything Extron specific to its' own module so we can write modules for other vendors.
+
+Re-write in Go using Gin.  I want to do this as a way to learn Go better, plus it should be somewhere around 18x faster.
