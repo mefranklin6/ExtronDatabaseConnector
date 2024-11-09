@@ -243,4 +243,4 @@ Currently only "Inputs" group is supported for mutual exclusivity, but you can a
 ## Future
 Make this system vendor agnostic.  Move the ECS code examples and anything Extron specific to its' own module so we can write modules for other vendors.
 
-Re-write in Go using Gin.  I want to do this as a way to learn Go better, plus it should be somewhere around 18x faster.
+Re-write in Go using Gin.  I want to do this as a way to learn Go better, plus it should be somewhere around 18x faster.  See the experimental branch with the Go server.
