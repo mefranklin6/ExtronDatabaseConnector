@@ -1,0 +1,14 @@
+{
+    "DBAddress": "<ip or hostname>",
+    "DBName": "devdb",
+    "DBTable": "testextron",
+    "DBUser": "<service account username>",
+    "DBPassword": "<service account password>",
+    "TrustedProxies": [
+        "127.0.0.1",
+        "<additional ip or ip range here>"
+    ],
+    "DBMaxIdleTimeMinutes" : 4,
+    "DBMaxOpenConnections" : 10,
+    "DBMaxIdleConns" : 25
+}
