@@ -5,6 +5,14 @@ Not affiliated with the Extron corporation
 
 https://github.com/mefranklin6/ExtronDatabaseConnector
 
+
+## FUTURE
+### This repository is scheduled for archive. The plan is to make another repository that is:
+
+1. Vendor Agnostic. The base services can handle anything that can work with the REST API or connect through TCP sockets.  This should cover most control processors.  I plan on having instructions that are control system specific on how to interact with the server.
+
+2. Server side code re-written as Go (golang) microservices.  You can find the development REST server in a dev branch now.  This will increase the capacity of existing servers, increase speed, and add horiziontal scalibility.
+
 ## Architecture for Extron Control Script Processors
 - Extron control processors send REST-like API calls to a proxy web server
 - Proxy server converts GET or POST commands from the processors into SQL SELECT/INSERT commands
@@ -240,7 +248,3 @@ The current input is stored in the REST_Connector class.  When group is passed a
 
 Currently only "Inputs" group is supported for mutual exclusivity, but you can add more by adding a class attibute to store the data, adding that attribute to the `clear_group` method, and adding your logic to the `_handle_group` method.
 
-## Future
-Make this system vendor agnostic.  Move the ECS code examples and anything Extron specific to its' own module so we can write modules for other vendors.
-
-Re-write in Go using Gin.  I want to do this as a way to learn Go better, plus it should be somewhere around 18x faster.  See the experimental branch with the Go server.
