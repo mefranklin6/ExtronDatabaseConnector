@@ -1,17 +1,13 @@
 # ExtronDatabaseConnector
 Allows Extron processors to connect with external databases
 
-Not affiliated with the Extron corporation
 
-https://github.com/mefranklin6/ExtronDatabaseConnector
+## PUBLIC ARCHIVE
 
+**Hey! There's a [new and better system at the link here](https://github.com/mefranklin6/AV-System-Metrics), which improves upon this project in every single way.**
 
-## FUTURE
-### This repository is scheduled for archive. The plan is to make another repository that is:
+This repository has been archived. No further development will take place. *Go check out the new project!* If the new project does not do something you need, submit an issue and I'll try my best to port it as quickly as possible!
 
-1. Vendor Agnostic. The base services can handle anything that can work with the REST API or connect through TCP sockets.  This should cover most control processors.  I plan on having instructions that are control system specific on how to interact with the server.
-
-2. Server side code re-written as Go (golang) microservices.  You can find the development REST server in a dev branch now.  This will increase the capacity of existing servers, increase speed, and add horiziontal scalibility.
 
 ## Architecture for Extron Control Script Processors
 - Extron control processors send REST-like API calls to a proxy web server
